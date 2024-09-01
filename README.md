@@ -9,13 +9,13 @@ To reveal trends that influency buy/sell decisions of the AAPL ticker by providi
 
 Programming Language: Python
 
-Data ingestion: AWS Lambda, AWS EventBridge Trigger, AWS Kinesis FireHose, AWS Glue Crawler, AWS IAM
+Data ingestion: ![AWS Lambda](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/1574de2d30f644046913b565ca778f22f449e567/logos--aws-lambda.svg) AWS Lambda, ![AWS EventBridge](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/1574de2d30f644046913b565ca778f22f449e567/logos--aws-eventbridge.svg) AWS Event Bridge, ![AWS Kinesis](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/1574de2d30f644046913b565ca778f22f449e567/logos--aws-kinesis.svg) AWS Kinesis FireHose, ![AWS EventBridge Trigger](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/1574de2d30f644046913b565ca778f22f449e567/logos--aws-eventbridge.svg) AWS EventBridge Trigger, ![AWS Glue Crawler](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/1574de2d30f644046913b565ca778f22f449e567/logos--aws-glue.svg) AWS Glue Crawler, ![AWS IAM](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/1574de2d30f644046913b565ca778f22f449e567/logos--aws-iam.svg) AWS IAM
 
-Data storage: AWS Athena and Query Editor, AWS S3
+Data storage: ![AWS Athena](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/1574de2d30f644046913b565ca778f22f449e567/logos--aws-athena.svg) AWS Athena and Query Editor, ![AWS S3](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/1574de2d30f644046913b565ca778f22f449e567/logos--aws-s3.svg) AWS S3
 
-Data transofrmation and validation: AWS Glue Jobs, AWS Glue Workflows, AWS Cloudwatch Logs
+Data transofrmation and validation: ![AWS Glue Jobs](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/1574de2d30f644046913b565ca778f22f449e567/logos--aws-glue.svg) AWS Glue Jobs, ![AWS Glue WorkFlows](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/1574de2d30f644046913b565ca778f22f449e567/logos--aws-glue.svg) AWS Glue Workflows, ![AWS Cloudwatch Logs](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/1574de2d30f644046913b565ca778f22f449e567/logos--aws-cloudwatch.svg) AWS Cloudwatch Logs
 
-Data visualization: Grafana
+Data visualization: Grafana, ![AWS IAM](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/1574de2d30f644046913b565ca778f22f449e567/logos--aws-iam.svg) AWS IAM
 
 ## Architecture Diagram
 
