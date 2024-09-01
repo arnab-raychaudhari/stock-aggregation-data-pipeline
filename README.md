@@ -29,15 +29,15 @@ Data visualization: ![Grafana](https://github.com/arnab-raychaudhari/stock-aggre
 
 3 - Create another S3 bucket where Kinesis Firehose will write the data streams coming in from the external API
 
-4 - Create a Kinesis Firehose and configure it to be ready to receive data. Ensure the buffer is set to 5 MB and 60 secs. A .json output of the firehose configuration is available at []()
+4 - Create a Kinesis Firehose and configure it to be ready to receive data. Ensure the buffer is set to 5 MB and 60 secs. A .json output of the firehose configuration is available at [firehose-config.json](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/cb5a6422542fd0c9e0879f430506367eb8f2a69f/firehose-config.json)
 
-5 - Create a Lambda function (python + x86_64) to call the external API. Update the timeout to 10 secs and use the correct name of your firehose. Before invoking the API, the date range in API URL will be updated to set the StartDate = Yesterday's date - 7 days, and EndDate = Yesterday's date. This way we will fetch hourly data for the last 7 days.
+5 - Create a Lambda function (python + x86_64) to call the external API. Update the timeout to 10 secs and use the correct name of your firehose. Before invoking the API, the date range in API URL will be updated to set the StartDate = Yesterday's date - 7 days, and EndDate = Yesterday's date. This way we will fetch hourly data for the last 7 days. Refer to the script [Lambda Function](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/cb5a6422542fd0c9e0879f430506367eb8f2a69f/stock-aggregate-data-ingestion-lambda-function.py)
 
-6 - Add an eventbridge trigger and schedule it run everyday at 11 EDT
+6 - Add an eventbridge trigger and schedule it run everyday at 11 EDT. Refer to .json format at [eventbridge_rule_details.json](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/cb5a6422542fd0c9e0879f430506367eb8f2a69f/eventbridge_rule_details.json)
 
-7 - Navigate to AWS Glue service and create a Crawler that reads the files created by Kinesis Firehose in the S3 bucket we created in step 3
+7 - Navigate to AWS Glue service and create a Crawler that reads the files created by Kinesis Firehose in the S3 bucket we created in step 3. Refer to .json format at [crawler-configuration.json](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/cb5a6422542fd0c9e0879f430506367eb8f2a69f/crawler_configuration.json)
 
-8 - Next, create a Glue job (that runs python script) that deletes the parquet tables from previous runs
+8 - Next, create a Glue job (that runs python script) that deletes the parquet tables from previous runs. 
 
 9 - Create another Glue job to roundup the aggregate figures to two places after decimal, and parse through the timestamp field to extract the day and hour marks to create a new feature 'day_hour_partition', which will be used to partition the parquet table. Also, this job will cast the Unixmsects into integer value for effective downstream processing. At last, the transformed dataset will be written to parquest table in AWS Athena.
 
