@@ -70,3 +70,6 @@ those in the parquet table (step 9) are the same
 
 ## Future Consideration
 
+**Enhance the data pipeline to be more flexible**, allowing it to fetch stock aggregates for multiple tickers based on user-selected preferences and timelines.
+
+**Train time series-based machine learning models** such as GARCH (Generalized Autoregressive Conditional Heteroskedasticity), LSTM (Long Short-Term Memory) Networks, XGBoost/LightGBM (Gradient Boosting Machines), and others to predict future stock movement trends.
