@@ -20,3 +20,7 @@ Data visualization: Grafana
 ## Architecture Diagram
 
 ![Architecture Diagram](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/8782140878d57c7cb14357b8ba031b1f13c813c5/StockAggregateArchitectureDiagram.jpg)
+
+## Results
+
+![Visualization](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/7661ef8257d252d043ce5b7afc1f6de281b9e8fe/GIF-grafana-dashboard.gif)
