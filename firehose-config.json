@@ -1,0 +1,68 @@
+{
+    "DeliveryStreamDescription": {
+        "DeliveryStreamName": "PUT-S3-WJCwt",
+        "DeliveryStreamARN": "arn:aws:firehose:us-east-1:xxxxxxxxxxxx:deliverystream/PUT-S3-WJCwt",
+        "DeliveryStreamStatus": "ACTIVE",
+        "DeliveryStreamEncryptionConfiguration": {
+            "Status": "DISABLED"
+        },
+        "DeliveryStreamType": "DirectPut",
+        "VersionId": "2",
+        "CreateTimestamp": "2024-08-27T19:45:48.338000-04:00",
+        "LastUpdateTimestamp": "2024-08-28T01:02:04.382000-04:00",
+        "Destinations": [
+            {
+                "DestinationId": "destinationId-000000000001",
+                "S3DestinationDescription": {
+                    "RoleARN": "arn:aws:iam::xxxxxxxxxxxx:role/service-role/KinesisFirehoseServiceRole-PUT-S3-WJCwt-us-east-1-1724801690872",
+                    "BucketARN": "arn:aws:s3:::stock-aggregate-data-1453891",
+                    "Prefix": "",
+                    "ErrorOutputPrefix": "",
+                    "BufferingHints": {
+                        "SizeInMBs": 5,
+                        "IntervalInSeconds": 60
+                    },
+                    "CompressionFormat": "UNCOMPRESSED",
+                    "EncryptionConfiguration": {
+                        "NoEncryptionConfig": "NoEncryption"
+                    },
+                    "CloudWatchLoggingOptions": {
+                        "Enabled": true,
+                        "LogGroupName": "/aws/kinesisfirehose/PUT-S3-WJCwt",
+                        "LogStreamName": "DestinationDelivery"
+                    }
+                },
+                "ExtendedS3DestinationDescription": {
+                    "RoleARN": "arn:aws:iam::xxxxxxxxxxxx:role/service-role/KinesisFirehoseServiceRole-PUT-S3-WJCwt-us-east-1-1724801690872",
+                    "BucketARN": "arn:aws:s3:::stock-aggregate-data-1453891",
+                    "Prefix": "",
+                    "ErrorOutputPrefix": "",
+                    "BufferingHints": {
+                        "SizeInMBs": 5,
+                        "IntervalInSeconds": 60
+                    },
+                    "CompressionFormat": "UNCOMPRESSED",
+                    "EncryptionConfiguration": {
+                        "NoEncryptionConfig": "NoEncryption"
+                    },
+                    "CloudWatchLoggingOptions": {
+                        "Enabled": true,
+                        "LogGroupName": "/aws/kinesisfirehose/PUT-S3-WJCwt",
+                        "LogStreamName": "DestinationDelivery"
+                    },
+                    "ProcessingConfiguration": {
+                        "Enabled": false,
+                        "Processors": []
+                    },
+                    "S3BackupMode": "Disabled",
+                    "DataFormatConversionConfiguration": {
+                        "Enabled": false
+                    },
+                    "FileExtension": "",
+                    "CustomTimeZone": "UTC"
+                }
+            }
+        ],
+        "HasMoreDestinations": false
+    }
+}
