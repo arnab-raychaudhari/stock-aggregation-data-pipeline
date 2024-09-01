@@ -26,4 +26,4 @@ Data visualization: Grafana
 
 ## Results
 
-![Visualization](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/7661ef8257d252d043ce5b7afc1f6de281b9e8fe/GIF-grafana-dashboard.gif)
+![Visualization](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/d00fb780b8e7bd3c0f63e6deab49038985481f5a/GIF-grafana-dashboard.gif)
