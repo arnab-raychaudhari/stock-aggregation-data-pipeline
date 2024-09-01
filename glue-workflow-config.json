@@ -1,0 +1,632 @@
+{
+    "Workflow": {
+        "Name": "data-pipeline-apple-stock-aggregate",
+        "DefaultRunProperties": {},
+        "CreatedOn": "2024-08-28T15:32:30.978000-04:00",
+        "LastModifiedOn": "2024-08-31T11:37:17.817000-04:00",
+        "LastRun": {
+            "Name": "data-pipeline-apple-stock-aggregate",
+            "WorkflowRunId": "wr_f409cd936659704e7fe5aa9c23fe5b8ad9521f37a47f1d4efa6fd2168b91d411",
+            "WorkflowRunProperties": {},
+            "StartedOn": "2024-09-01T12:00:42.310000-04:00",
+            "CompletedOn": "2024-09-01T12:08:56.604000-04:00",
+            "Status": "COMPLETED",
+            "Statistics": {
+                "TotalActions": 6,
+                "TimeoutActions": 0,
+                "FailedActions": 0,
+                "StoppedActions": 0,
+                "SucceededActions": 6,
+                "RunningActions": 0,
+                "ErroredActions": 0,
+                "WaitingActions": 0
+            },
+            "Graph": {
+                "Nodes": [
+                    {
+                        "Type": "TRIGGER",
+                        "Name": "trigger_delete_stock_aggregate_pqt_table",
+                        "UniqueId": "wnode_e55a1abaea0211569b0481e4cb6cb26b542081b02f7e6a1e0981cab8b5ba8efd",
+                        "TriggerDetails": {
+                            "Trigger": {
+                                "Name": "trigger_delete_stock_aggregate_pqt_table",
+                                "WorkflowName": "data-pipeline-apple-stock-aggregate",
+                                "Type": "CONDITIONAL",
+                                "State": "ACTIVATED",
+                                "Actions": [
+                                    {
+                                        "JobName": "delete-pqt-stock-aggregate-data"
+                                    }
+                                ],
+                                "Predicate": {
+                                    "Logical": "ANY",
+                                    "Conditions": [
+                                        {
+                                            "LogicalOperator": "EQUALS",
+                                            "CrawlerName": "apple-stock-aggregate",
+                                            "CrawlState": "SUCCEEDED"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "Type": "TRIGGER",
+                        "Name": "trigger_create_pqt_stock_aggregate_apple",
+                        "UniqueId": "wnode_e81180be6764034825f5f57df743142333e86b0175667342a9c317e1b60eec2f",
+                        "TriggerDetails": {
+                            "Trigger": {
+                                "Name": "trigger_create_pqt_stock_aggregate_apple",
+                                "WorkflowName": "data-pipeline-apple-stock-aggregate",
+                                "Type": "CONDITIONAL",
+                                "State": "ACTIVATED",
+                                "Actions": [
+                                    {
+                                        "JobName": "create-stock-aggregate-data-pqt"
+                                    }
+                                ],
+                                "Predicate": {
+                                    "Logical": "ANY",
+                                    "Conditions": [
+                                        {
+                                            "LogicalOperator": "EQUALS",
+                                            "JobName": "delete-pqt-stock-aggregate-data",
+                                            "State": "SUCCEEDED"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "Type": "TRIGGER",
+                        "Name": "trigger_publish_prod_pqt_stock_aggregate_apple",
+                        "UniqueId": "wnode_eb653740a421fda265fe320bd935f500b1f529e1e7940c9081e645415b7fb3a9",
+                        "TriggerDetails": {
+                            "Trigger": {
+                                "Name": "trigger_publish_prod_pqt_stock_aggregate_apple",
+                                "WorkflowName": "data-pipeline-apple-stock-aggregate",
+                                "Type": "CONDITIONAL",
+                                "State": "ACTIVATED",
+                                "Actions": [
+                                    {
+                                        "JobName": "publish_prod_parquet_stock_aggregate"
+                                    }
+                                ],
+                                "Predicate": {
+                                    "Logical": "ANY",
+                                    "Conditions": [
+                                        {
+                                            "LogicalOperator": "EQUALS",
+                                            "JobName": "data-quality-stock-aggregate",
+                                            "State": "SUCCEEDED"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "Type": "TRIGGER",
+                        "Name": "trigger_create_sans_dup_pqt_table",
+                        "UniqueId": "wnode_807e7eff7a1fa6c6a3dab12994f523d3b43ebb61c3386c1a597228d80cb6aa55",
+                        "TriggerDetails": {
+                            "Trigger": {
+                                "Name": "trigger_create_sans_dup_pqt_table",
+                                "WorkflowName": "data-pipeline-apple-stock-aggregate",
+                                "Type": "CONDITIONAL",
+                                "State": "ACTIVATED",
+                                "Actions": [
+                                    {
+                                        "JobName": "create-sans-dup-pqt-if-required"
+                                    }
+                                ],
+                                "Predicate": {
+                                    "Logical": "ANY",
+                                    "Conditions": [
+                                        {
+                                            "LogicalOperator": "EQUALS",
+                                            "JobName": "create-stock-aggregate-data-pqt",
+                                            "State": "SUCCEEDED"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "Type": "TRIGGER",
+                        "Name": "trigger_quality_data_checks",
+                        "UniqueId": "wnode_3b7cbc7ba64b601a770d7bee84b9b4ec665751f14f93949a19d47a40d1156f81",
+                        "TriggerDetails": {
+                            "Trigger": {
+                                "Name": "trigger_quality_data_checks",
+                                "WorkflowName": "data-pipeline-apple-stock-aggregate",
+                                "Type": "CONDITIONAL",
+                                "State": "ACTIVATED",
+                                "Actions": [
+                                    {
+                                        "JobName": "data-quality-stock-aggregate"
+                                    }
+                                ],
+                                "Predicate": {
+                                    "Logical": "ANY",
+                                    "Conditions": [
+                                        {
+                                            "LogicalOperator": "EQUALS",
+                                            "JobName": "create-sans-dup-pqt-if-required",
+                                            "State": "SUCCEEDED"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "Type": "TRIGGER",
+                        "Name": "tee_off_apple_stock_aggregate_data_pipeline",
+                        "UniqueId": "wnode_49531ee222938f844e6fadecae37254d77ab7f85520226b4f8eb40e8cad3c0d0",
+                        "TriggerDetails": {
+                            "Trigger": {
+                                "Name": "tee_off_apple_stock_aggregate_data_pipeline",
+                                "WorkflowName": "data-pipeline-apple-stock-aggregate",
+                                "Type": "SCHEDULED",
+                                "State": "ACTIVATED",
+                                "Schedule": "cron(0 16 * * ? *)",
+                                "Actions": [
+                                    {
+                                        "CrawlerName": "apple-stock-aggregate"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "Type": "JOB",
+                        "Name": "delete-pqt-stock-aggregate-data",
+                        "UniqueId": "wnode_1de5e238426e4c346de2bd3049607a00e63e28f8add1900fa7849f61d29f51ea",
+                        "JobDetails": {
+                            "JobRuns": [
+                                {
+                                    "Id": "jr_2dc2c912685f83f0a98aef524082f17b5cdc942a86d8c3ff9370f233f63eff72",
+                                    "Attempt": 0,
+                                    "TriggerName": "trigger_delete_stock_aggregate_pqt_table",
+                                    "JobName": "delete-pqt-stock-aggregate-data",
+                                    "JobMode": "SCRIPT",
+                                    "StartedOn": "2024-09-01T12:04:24.293000-04:00",
+                                    "LastModifiedOn": "2024-09-01T12:04:59.648000-04:00",
+                                    "CompletedOn": "2024-09-01T12:04:59.648000-04:00",
+                                    "JobRunState": "SUCCEEDED",
+                                    "PredecessorRuns": [],
+                                    "AllocatedCapacity": 0,
+                                    "ExecutionTime": 25,
+                                    "Timeout": 2880,
+                                    "MaxCapacity": 0.0625,
+                                    "LogGroupName": "/aws-glue/python-jobs",
+                                    "GlueVersion": "1.0",
+                                    "ExecutionClass": "STANDARD"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "Type": "JOB",
+                        "Name": "create-stock-aggregate-data-pqt",
+                        "UniqueId": "wnode_54bc67948611a14cd8c71d0604c13d7021fbc1dbd9847d1f9cb33d5e1b6919ec",
+                        "JobDetails": {
+                            "JobRuns": [
+                                {
+                                    "Id": "jr_df9df86edb85c79b9d6499e6450eeb6d27ebcd3dd086d1812d718a01157e8f62",
+                                    "Attempt": 0,
+                                    "TriggerName": "trigger_create_pqt_stock_aggregate_apple",
+                                    "JobName": "create-stock-aggregate-data-pqt",
+                                    "JobMode": "SCRIPT",
+                                    "StartedOn": "2024-09-01T12:05:31.873000-04:00",
+                                    "LastModifiedOn": "2024-09-01T12:05:55.591000-04:00",
+                                    "CompletedOn": "2024-09-01T12:05:55.591000-04:00",
+                                    "JobRunState": "SUCCEEDED",
+                                    "PredecessorRuns": [],
+                                    "AllocatedCapacity": 0,
+                                    "ExecutionTime": 19,
+                                    "Timeout": 2880,
+                                    "MaxCapacity": 0.0625,
+                                    "LogGroupName": "/aws-glue/python-jobs",
+                                    "GlueVersion": "1.0",
+                                    "ExecutionClass": "STANDARD"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "Type": "JOB",
+                        "Name": "create-sans-dup-pqt-if-required",
+                        "UniqueId": "wnode_2cbc8434c39f75827ce15c6ea3a57d3e040ee10ebc3a4bc72ee5bb869504704a",
+                        "JobDetails": {
+                            "JobRuns": [
+                                {
+                                    "Id": "jr_a316b7e881899325266059c4af3fd5f42a80fcf9a3b2a36b4bb4e8ee7e28330e",
+                                    "Attempt": 0,
+                                    "TriggerName": "trigger_create_sans_dup_pqt_table",
+                                    "JobName": "create-sans-dup-pqt-if-required",
+                                    "JobMode": "SCRIPT",
+                                    "StartedOn": "2024-09-01T12:06:25.978000-04:00",
+                                    "LastModifiedOn": "2024-09-01T12:06:52.721000-04:00",
+                                    "CompletedOn": "2024-09-01T12:06:52.721000-04:00",
+                                    "JobRunState": "SUCCEEDED",
+                                    "PredecessorRuns": [],
+                                    "AllocatedCapacity": 0,
+                                    "ExecutionTime": 21,
+                                    "Timeout": 2880,
+                                    "MaxCapacity": 0.0625,
+                                    "LogGroupName": "/aws-glue/python-jobs",
+                                    "GlueVersion": "1.0",
+                                    "ExecutionClass": "STANDARD"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "Type": "JOB",
+                        "Name": "publish_prod_parquet_stock_aggregate",
+                        "UniqueId": "wnode_60ecb89a6b386d733fba9ddd62bd6934bdb799062118bb5848a2f236a15cba38",
+                        "JobDetails": {
+                            "JobRuns": [
+                                {
+                                    "Id": "jr_629d600b43a700e570b99f33947eeda50e0b51d833053145965fbeebc48fdaeb",
+                                    "Attempt": 0,
+                                    "TriggerName": "trigger_publish_prod_pqt_stock_aggregate_apple",
+                                    "JobName": "publish_prod_parquet_stock_aggregate",
+                                    "JobMode": "SCRIPT",
+                                    "StartedOn": "2024-09-01T12:08:31.629000-04:00",
+                                    "LastModifiedOn": "2024-09-01T12:08:56.604000-04:00",
+                                    "CompletedOn": "2024-09-01T12:08:56.604000-04:00",
+                                    "JobRunState": "SUCCEEDED",
+                                    "PredecessorRuns": [],
+                                    "AllocatedCapacity": 0,
+                                    "ExecutionTime": 20,
+                                    "Timeout": 2880,
+                                    "MaxCapacity": 0.0625,
+                                    "LogGroupName": "/aws-glue/python-jobs",
+                                    "GlueVersion": "1.0",
+                                    "ExecutionClass": "STANDARD"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "Type": "CRAWLER",
+                        "Name": "apple-stock-aggregate",
+                        "UniqueId": "wnode_8cc9a7f5102239cb119486f335dd5f53ef3d71c2420412d579230cdbc1cad86e",
+                        "CrawlerDetails": {
+                            "Crawls": [
+                                {
+                                    "State": "SUCCEEDED",
+                                    "StartedOn": "2024-09-01T12:00:42-04:00"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "Type": "JOB",
+                        "Name": "data-quality-stock-aggregate",
+                        "UniqueId": "wnode_724f18b728eeab9dbcb5aab6234ed0ecb97344b1a1cf1b889662ed15383d9d4a",
+                        "JobDetails": {
+                            "JobRuns": [
+                                {
+                                    "Id": "jr_6392076a2572dcec8eaffacac559a75651dfd449061a26273e8d3bb315becb7e",
+                                    "Attempt": 0,
+                                    "TriggerName": "trigger_quality_data_checks",
+                                    "JobName": "data-quality-stock-aggregate",
+                                    "JobMode": "SCRIPT",
+                                    "StartedOn": "2024-09-01T12:07:23.101000-04:00",
+                                    "LastModifiedOn": "2024-09-01T12:08:01.191000-04:00",
+                                    "CompletedOn": "2024-09-01T12:08:01.191000-04:00",
+                                    "JobRunState": "SUCCEEDED",
+                                    "PredecessorRuns": [],
+                                    "AllocatedCapacity": 0,
+                                    "ExecutionTime": 32,
+                                    "Timeout": 2880,
+                                    "MaxCapacity": 0.0625,
+                                    "LogGroupName": "/aws-glue/python-jobs",
+                                    "GlueVersion": "1.0",
+                                    "ExecutionClass": "STANDARD"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "Edges": [
+                    {
+                        "SourceId": "wnode_e55a1abaea0211569b0481e4cb6cb26b542081b02f7e6a1e0981cab8b5ba8efd",
+                        "DestinationId": "wnode_1de5e238426e4c346de2bd3049607a00e63e28f8add1900fa7849f61d29f51ea"
+                    },
+                    {
+                        "SourceId": "wnode_e81180be6764034825f5f57df743142333e86b0175667342a9c317e1b60eec2f",
+                        "DestinationId": "wnode_54bc67948611a14cd8c71d0604c13d7021fbc1dbd9847d1f9cb33d5e1b6919ec"
+                    },
+                    {
+                        "SourceId": "wnode_807e7eff7a1fa6c6a3dab12994f523d3b43ebb61c3386c1a597228d80cb6aa55",
+                        "DestinationId": "wnode_2cbc8434c39f75827ce15c6ea3a57d3e040ee10ebc3a4bc72ee5bb869504704a"
+                    },
+                    {
+                        "SourceId": "wnode_eb653740a421fda265fe320bd935f500b1f529e1e7940c9081e645415b7fb3a9",
+                        "DestinationId": "wnode_60ecb89a6b386d733fba9ddd62bd6934bdb799062118bb5848a2f236a15cba38"
+                    },
+                    {
+                        "SourceId": "wnode_49531ee222938f844e6fadecae37254d77ab7f85520226b4f8eb40e8cad3c0d0",
+                        "DestinationId": "wnode_8cc9a7f5102239cb119486f335dd5f53ef3d71c2420412d579230cdbc1cad86e"
+                    },
+                    {
+                        "SourceId": "wnode_3b7cbc7ba64b601a770d7bee84b9b4ec665751f14f93949a19d47a40d1156f81",
+                        "DestinationId": "wnode_724f18b728eeab9dbcb5aab6234ed0ecb97344b1a1cf1b889662ed15383d9d4a"
+                    },
+                    {
+                        "SourceId": "wnode_54bc67948611a14cd8c71d0604c13d7021fbc1dbd9847d1f9cb33d5e1b6919ec",
+                        "DestinationId": "wnode_807e7eff7a1fa6c6a3dab12994f523d3b43ebb61c3386c1a597228d80cb6aa55"
+                    },
+                    {
+                        "SourceId": "wnode_2cbc8434c39f75827ce15c6ea3a57d3e040ee10ebc3a4bc72ee5bb869504704a",
+                        "DestinationId": "wnode_3b7cbc7ba64b601a770d7bee84b9b4ec665751f14f93949a19d47a40d1156f81"
+                    },
+                    {
+                        "SourceId": "wnode_1de5e238426e4c346de2bd3049607a00e63e28f8add1900fa7849f61d29f51ea",
+                        "DestinationId": "wnode_e81180be6764034825f5f57df743142333e86b0175667342a9c317e1b60eec2f"
+                    },
+                    {
+                        "SourceId": "wnode_724f18b728eeab9dbcb5aab6234ed0ecb97344b1a1cf1b889662ed15383d9d4a",
+                        "DestinationId": "wnode_eb653740a421fda265fe320bd935f500b1f529e1e7940c9081e645415b7fb3a9"
+                    },
+                    {
+                        "SourceId": "wnode_8cc9a7f5102239cb119486f335dd5f53ef3d71c2420412d579230cdbc1cad86e",
+                        "DestinationId": "wnode_e55a1abaea0211569b0481e4cb6cb26b542081b02f7e6a1e0981cab8b5ba8efd"
+                    }
+                ]
+            }
+        },
+        "Graph": {
+            "Nodes": [
+                {
+                    "Type": "TRIGGER",
+                    "Name": "trigger_delete_stock_aggregate_pqt_table",
+                    "UniqueId": "wnode_e55a1abaea0211569b0481e4cb6cb26b542081b02f7e6a1e0981cab8b5ba8efd",
+                    "TriggerDetails": {
+                        "Trigger": {
+                            "Name": "trigger_delete_stock_aggregate_pqt_table",
+                            "WorkflowName": "data-pipeline-apple-stock-aggregate",
+                            "Type": "CONDITIONAL",
+                            "State": "ACTIVATED",
+                            "Actions": [
+                                {
+                                    "JobName": "delete-pqt-stock-aggregate-data"
+                                }
+                            ],
+                            "Predicate": {
+                                "Logical": "ANY",
+                                "Conditions": [
+                                    {
+                                        "LogicalOperator": "EQUALS",
+                                        "CrawlerName": "apple-stock-aggregate",
+                                        "CrawlState": "SUCCEEDED"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                {
+                    "Type": "TRIGGER",
+                    "Name": "trigger_create_pqt_stock_aggregate_apple",
+                    "UniqueId": "wnode_e81180be6764034825f5f57df743142333e86b0175667342a9c317e1b60eec2f",
+                    "TriggerDetails": {
+                        "Trigger": {
+                            "Name": "trigger_create_pqt_stock_aggregate_apple",
+                            "WorkflowName": "data-pipeline-apple-stock-aggregate",
+                            "Type": "CONDITIONAL",
+                            "State": "ACTIVATED",
+                            "Actions": [
+                                {
+                                    "JobName": "create-stock-aggregate-data-pqt"
+                                }
+                            ],
+                            "Predicate": {
+                                "Logical": "ANY",
+                                "Conditions": [
+                                    {
+                                        "LogicalOperator": "EQUALS",
+                                        "JobName": "delete-pqt-stock-aggregate-data",
+                                        "State": "SUCCEEDED"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                {
+                    "Type": "TRIGGER",
+                    "Name": "trigger_publish_prod_pqt_stock_aggregate_apple",
+                    "UniqueId": "wnode_eb653740a421fda265fe320bd935f500b1f529e1e7940c9081e645415b7fb3a9",
+                    "TriggerDetails": {
+                        "Trigger": {
+                            "Name": "trigger_publish_prod_pqt_stock_aggregate_apple",
+                            "WorkflowName": "data-pipeline-apple-stock-aggregate",
+                            "Type": "CONDITIONAL",
+                            "State": "ACTIVATED",
+                            "Actions": [
+                                {
+                                    "JobName": "publish_prod_parquet_stock_aggregate"
+                                }
+                            ],
+                            "Predicate": {
+                                "Logical": "ANY",
+                                "Conditions": [
+                                    {
+                                        "LogicalOperator": "EQUALS",
+                                        "JobName": "data-quality-stock-aggregate",
+                                        "State": "SUCCEEDED"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                {
+                    "Type": "TRIGGER",
+                    "Name": "trigger_create_sans_dup_pqt_table",
+                    "UniqueId": "wnode_807e7eff7a1fa6c6a3dab12994f523d3b43ebb61c3386c1a597228d80cb6aa55",
+                    "TriggerDetails": {
+                        "Trigger": {
+                            "Name": "trigger_create_sans_dup_pqt_table",
+                            "WorkflowName": "data-pipeline-apple-stock-aggregate",
+                            "Type": "CONDITIONAL",
+                            "State": "ACTIVATED",
+                            "Actions": [
+                                {
+                                    "JobName": "create-sans-dup-pqt-if-required"
+                                }
+                            ],
+                            "Predicate": {
+                                "Logical": "ANY",
+                                "Conditions": [
+                                    {
+                                        "LogicalOperator": "EQUALS",
+                                        "JobName": "create-stock-aggregate-data-pqt",
+                                        "State": "SUCCEEDED"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                {
+                    "Type": "TRIGGER",
+                    "Name": "trigger_quality_data_checks",
+                    "UniqueId": "wnode_3b7cbc7ba64b601a770d7bee84b9b4ec665751f14f93949a19d47a40d1156f81",
+                    "TriggerDetails": {
+                        "Trigger": {
+                            "Name": "trigger_quality_data_checks",
+                            "WorkflowName": "data-pipeline-apple-stock-aggregate",
+                            "Type": "CONDITIONAL",
+                            "State": "ACTIVATED",
+                            "Actions": [
+                                {
+                                    "JobName": "data-quality-stock-aggregate"
+                                }
+                            ],
+                            "Predicate": {
+                                "Logical": "ANY",
+                                "Conditions": [
+                                    {
+                                        "LogicalOperator": "EQUALS",
+                                        "JobName": "create-sans-dup-pqt-if-required",
+                                        "State": "SUCCEEDED"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                {
+                    "Type": "TRIGGER",
+                    "Name": "tee_off_apple_stock_aggregate_data_pipeline",
+                    "UniqueId": "wnode_49531ee222938f844e6fadecae37254d77ab7f85520226b4f8eb40e8cad3c0d0",
+                    "TriggerDetails": {
+                        "Trigger": {
+                            "Name": "tee_off_apple_stock_aggregate_data_pipeline",
+                            "WorkflowName": "data-pipeline-apple-stock-aggregate",
+                            "Type": "SCHEDULED",
+                            "State": "ACTIVATED",
+                            "Schedule": "cron(0 16 * * ? *)",
+                            "Actions": [
+                                {
+                                    "CrawlerName": "apple-stock-aggregate"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "Type": "JOB",
+                    "Name": "data-quality-stock-aggregate",
+                    "UniqueId": "wnode_724f18b728eeab9dbcb5aab6234ed0ecb97344b1a1cf1b889662ed15383d9d4a",
+                    "JobDetails": {}
+                },
+                {
+                    "Type": "CRAWLER",
+                    "Name": "apple-stock-aggregate",
+                    "UniqueId": "wnode_8cc9a7f5102239cb119486f335dd5f53ef3d71c2420412d579230cdbc1cad86e"
+                },
+                {
+                    "Type": "JOB",
+                    "Name": "publish_prod_parquet_stock_aggregate",
+                    "UniqueId": "wnode_60ecb89a6b386d733fba9ddd62bd6934bdb799062118bb5848a2f236a15cba38",
+                    "JobDetails": {}
+                },
+                {
+                    "Type": "JOB",
+                    "Name": "create-sans-dup-pqt-if-required",
+                    "UniqueId": "wnode_2cbc8434c39f75827ce15c6ea3a57d3e040ee10ebc3a4bc72ee5bb869504704a",
+                    "JobDetails": {}
+                },
+                {
+                    "Type": "JOB",
+                    "Name": "create-stock-aggregate-data-pqt",
+                    "UniqueId": "wnode_54bc67948611a14cd8c71d0604c13d7021fbc1dbd9847d1f9cb33d5e1b6919ec",
+                    "JobDetails": {}
+                },
+                {
+                    "Type": "JOB",
+                    "Name": "delete-pqt-stock-aggregate-data",
+                    "UniqueId": "wnode_1de5e238426e4c346de2bd3049607a00e63e28f8add1900fa7849f61d29f51ea",
+                    "JobDetails": {}
+                }
+            ],
+            "Edges": [
+                {
+                    "SourceId": "wnode_3b7cbc7ba64b601a770d7bee84b9b4ec665751f14f93949a19d47a40d1156f81",
+                    "DestinationId": "wnode_724f18b728eeab9dbcb5aab6234ed0ecb97344b1a1cf1b889662ed15383d9d4a"
+                },
+                {
+                    "SourceId": "wnode_49531ee222938f844e6fadecae37254d77ab7f85520226b4f8eb40e8cad3c0d0",
+                    "DestinationId": "wnode_8cc9a7f5102239cb119486f335dd5f53ef3d71c2420412d579230cdbc1cad86e"
+                },
+                {
+                    "SourceId": "wnode_eb653740a421fda265fe320bd935f500b1f529e1e7940c9081e645415b7fb3a9",
+                    "DestinationId": "wnode_60ecb89a6b386d733fba9ddd62bd6934bdb799062118bb5848a2f236a15cba38"
+                },
+                {
+                    "SourceId": "wnode_807e7eff7a1fa6c6a3dab12994f523d3b43ebb61c3386c1a597228d80cb6aa55",
+                    "DestinationId": "wnode_2cbc8434c39f75827ce15c6ea3a57d3e040ee10ebc3a4bc72ee5bb869504704a"
+                },
+                {
+                    "SourceId": "wnode_e81180be6764034825f5f57df743142333e86b0175667342a9c317e1b60eec2f",
+                    "DestinationId": "wnode_54bc67948611a14cd8c71d0604c13d7021fbc1dbd9847d1f9cb33d5e1b6919ec"
+                },
+                {
+                    "SourceId": "wnode_e55a1abaea0211569b0481e4cb6cb26b542081b02f7e6a1e0981cab8b5ba8efd",
+                    "DestinationId": "wnode_1de5e238426e4c346de2bd3049607a00e63e28f8add1900fa7849f61d29f51ea"
+                },
+                {
+                    "SourceId": "wnode_54bc67948611a14cd8c71d0604c13d7021fbc1dbd9847d1f9cb33d5e1b6919ec",
+                    "DestinationId": "wnode_807e7eff7a1fa6c6a3dab12994f523d3b43ebb61c3386c1a597228d80cb6aa55"
+                },
+                {
+                    "SourceId": "wnode_2cbc8434c39f75827ce15c6ea3a57d3e040ee10ebc3a4bc72ee5bb869504704a",
+                    "DestinationId": "wnode_3b7cbc7ba64b601a770d7bee84b9b4ec665751f14f93949a19d47a40d1156f81"
+                },
+                {
+                    "SourceId": "wnode_1de5e238426e4c346de2bd3049607a00e63e28f8add1900fa7849f61d29f51ea",
+                    "DestinationId": "wnode_e81180be6764034825f5f57df743142333e86b0175667342a9c317e1b60eec2f"
+                },
+                {
+                    "SourceId": "wnode_724f18b728eeab9dbcb5aab6234ed0ecb97344b1a1cf1b889662ed15383d9d4a",
+                    "DestinationId": "wnode_eb653740a421fda265fe320bd935f500b1f529e1e7940c9081e645415b7fb3a9"
+                },
+                {
+                    "SourceId": "wnode_8cc9a7f5102239cb119486f335dd5f53ef3d71c2420412d579230cdbc1cad86e",
+                    "DestinationId": "wnode_e55a1abaea0211569b0481e4cb6cb26b542081b02f7e6a1e0981cab8b5ba8efd"
+                }
+            ]
+        }
+    }
+}
