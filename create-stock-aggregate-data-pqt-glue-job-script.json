@@ -1,39 +1,108 @@
-{
-	"jobConfig": {
-		"name": "create-stock-aggregate-data-pqt",
-		"description": "",
-		"role": "arn:aws:iam::xxxxxxxxxxxx:role/service-role/AWSGlueServiceRole",
-		"command": "pythonshell",
-		"version": "1.0",
-		"runtime": null,
-		"workerType": null,
-		"numberOfWorkers": null,
-		"maxCapacity": 0.0625,
-		"jobRunQueuingEnabled": false,
-		"maxRetries": 0,
-		"timeout": 2880,
-		"maxConcurrentRuns": 1,
-		"security": "none",
-		"scriptName": "create-stock-aggregate-data-pqt.py",
-		"scriptLocation": "s3://aws-glue-assets-xxxxxxxxxxxx-us-east-1/scripts/",
-		"language": "python-3.9",
-		"spark": false,
-		"jobParameters": [],
-		"tags": [],
-		"jobMode": "DEVELOPER_MODE",
-		"createdOn": "2024-08-28T05:10:23.555Z",
-		"developerMode": true,
-		"connectionsList": [],
-		"temporaryDirectory": "s3://aws-glue-assets-xxxxxxxxxxxx-us-east-1/temporary/",
-		"glueHiveMetastore": true,
-		"etlAutoTuning": false,
-		"observabilityMetrics": false,
-		"pythonShellPrebuiltLibraryOption": "analytics",
-		"flexExecution": false,
-		"minFlexWorkers": null,
-		"maintenanceWindow": null
-	},
-	"hasBeenSaved": false,
-	"usageProfileName": null,
-	"script": "import sys\nimport boto3\n\nclient = boto3.client('athena')\n\nSOURCE_TABLE_NAME = 'apple_stock_aggregate_data_1453891'\nNEW_TABLE_NAME = 'apple_stock_aggregate_data_parquet_tbl'\nNEW_TABLE_S3_BUCKET = 's3://pqt-stock-aggregate-data-1453891/'\nMY_DATABASE = 'stockaggregatedata'\nQUERY_RESULTS_S3_BUCKET = 's3://athena-query-results-first-de-project-aug-2024-1639045/'\n\n# Refresh the table\nqueryStart = client.start_query_execution(\n    QueryString = f\"\"\"\n    CREATE TABLE {NEW_TABLE_NAME} WITH\n    (external_location='{NEW_TABLE_S3_BUCKET}',\n    format='PARQUET',\n    write_compression='SNAPPY',\n    partitioned_by = ARRAY['day_hour_partition'])\n    AS\n\n    SELECT\n    normal_timestamp,\n    ROUND(tradvol, 2) AS TradVol,\n    ROUND(volwtavg, 2) AS VolWtAvg,\n    ROUND(openprice, 2) AS OpenPrice,\n    ROUND(closeprice, 2) AS ClosePrice,\n    ROUND(highestprice, 2) AS HighestPrice,\n    ROUND(lowestprice, 2) AS LowestPrice,\n    CONCAT(\n        SUBSTRING(CAST(normal_timestamp AS VARCHAR), 9, 2), \n        SUBSTRING(CAST(normal_timestamp AS VARCHAR), 12, 2)\n    ) AS day_hour_partition\nFROM (\n    SELECT\n        from_unixtime(CAST(unixmsects / 1000 AS BIGINT)) AS normal_timestamp,\n        tradvol,\n        volwtavg,\n        openprice,\n        closeprice,\n        highestprice,\n        lowestprice\n        FROM \"{MY_DATABASE}\".\"{SOURCE_TABLE_NAME}\"\n    ) subquery\n    ;\n    \"\"\",\n\n    QueryExecutionContext = {\n        'Database': f'{MY_DATABASE}'\n    }, \n    ResultConfiguration = { 'OutputLocation': f'{QUERY_RESULTS_S3_BUCKET}'}\n)\n\n# list of responses\nresp = [\"FAILED\", \"SUCCEEDED\", \"CANCELLED\"]\n\n# get the response\nresponse = client.get_query_execution(QueryExecutionId=queryStart[\"QueryExecutionId\"])\n\n# wait until query finishes\nwhile response[\"QueryExecution\"][\"Status\"][\"State\"] not in resp:\n    response = client.get_query_execution(QueryExecutionId=queryStart[\"QueryExecutionId\"])\n    \n# if it fails, exit and give the Athena error message in the logs\nif response[\"QueryExecution\"][\"Status\"][\"State\"] == 'FAILED':\n    sys.exit(response[\"QueryExecution\"][\"Status\"][\"StateChangeReason\"])"
+import sys
+import boto3
+
+client = boto3.client('athena')
+
+SOURCE_TABLE_NAME = 'apple_stock_aggregate_data_1453891'
+NEW_TABLE_NAME = 'apple_stock_aggregate_data_parquet_tbl'
+NEW_TABLE_S3_BUCKET = 's3: //pqt-stock-aggregate-data-1453891/'
+MY_DATABASE = 'stockaggregatedata'
+QUERY_RESULTS_S3_BUCKET = 's3: //athena-query-results-first-de-project-aug-2024-1639045/'
+
+# Refresh the table
+queryStart = client.start_query_execution(
+    QueryString = f"""
+    CREATE TABLE {NEW_TABLE_NAME
+} WITH
+    (external_location='{NEW_TABLE_S3_BUCKET
+}',
+    format='PARQUET',
+    write_compression='SNAPPY',
+    partitioned_by = ARRAY['day_hour_partition'
+])
+    AS
+
+    SELECT
+    normal_timestamp,
+    ROUND(tradvol,
+2) AS TradVol,
+    ROUND(volwtavg,
+2) AS VolWtAvg,
+    ROUND(openprice,
+2) AS OpenPrice,
+    ROUND(closeprice,
+2) AS ClosePrice,
+    ROUND(highestprice,
+2) AS HighestPrice,
+    ROUND(lowestprice,
+2) AS LowestPrice,
+    CONCAT(
+        SUBSTRING(CAST(normal_timestamp AS VARCHAR),
+9,
+2), 
+        SUBSTRING(CAST(normal_timestamp AS VARCHAR),
+12,
+2)
+    ) AS day_hour_partition
+FROM (
+    SELECT
+        from_unixtime(CAST(unixmsects / 1000 AS BIGINT)) AS normal_timestamp,
+        tradvol,
+        volwtavg,
+        openprice,
+        closeprice,
+        highestprice,
+        lowestprice
+        FROM "{MY_DATABASE}"."{SOURCE_TABLE_NAME}"
+    ) subquery
+    ;
+    """,
+
+    QueryExecutionContext = {
+        'Database': f'{MY_DATABASE
+	}'
+}, 
+    ResultConfiguration = { 'OutputLocation': f'{QUERY_RESULTS_S3_BUCKET
+	}'
 }
+)
+
+# list of responses
+resp = [
+	"FAILED",
+	"SUCCEEDED",
+	"CANCELLED"
+]
+
+# get the response
+response = client.get_query_execution(QueryExecutionId=queryStart[
+	"QueryExecutionId"
+])
+
+# wait until query finishes
+while response[
+	"QueryExecution"
+][
+	"Status"
+][
+	"State"
+] not in resp:
+    response = client.get_query_execution(QueryExecutionId=queryStart[
+	"QueryExecutionId"
+])
+    
+# if it fails, exit and give the Athena error message in the logs
+if response[
+	"QueryExecution"
+][
+	"Status"
+][
+	"State"
+] == 'FAILED':
+    sys.exit(response[
+	"QueryExecution"
+][
+	"Status"
+][
+	"StateChangeReason"
+])

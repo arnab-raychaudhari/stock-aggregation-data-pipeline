@@ -1,39 +1,116 @@
-{
-	"jobConfig": {
-		"name": "data-quality-stock-aggregate",
-		"description": "",
-		"role": "arn:aws:iam::xxxxxxxxxxxx:role/service-role/AWSGlueServiceRole",
-		"command": "pythonshell",
-		"version": "1.0",
-		"runtime": null,
-		"workerType": null,
-		"numberOfWorkers": null,
-		"maxCapacity": 0.0625,
-		"jobRunQueuingEnabled": false,
-		"maxRetries": 0,
-		"timeout": 2880,
-		"maxConcurrentRuns": 1,
-		"security": "none",
-		"scriptName": "data-quality-stock-aggregate.py",
-		"scriptLocation": "s3://aws-glue-assets-xxxxxxxxxxxx-us-east-1/scripts/",
-		"language": "python-3.9",
-		"spark": false,
-		"jobParameters": [],
-		"tags": [],
-		"jobMode": "DEVELOPER_MODE",
-		"createdOn": "2024-08-28T17:11:56.551Z",
-		"developerMode": true,
-		"connectionsList": [],
-		"temporaryDirectory": "s3://aws-glue-assets-xxxxxxxxxxxx-us-east-1/temporary/",
-		"glueHiveMetastore": true,
-		"etlAutoTuning": false,
-		"observabilityMetrics": false,
-		"pythonShellPrebuiltLibraryOption": "analytics",
-		"flexExecution": false,
-		"minFlexWorkers": null,
-		"maintenanceWindow": null
-	},
-	"hasBeenSaved": false,
-	"usageProfileName": null,
-	"script": "import sys\nimport awswrangler as wr\nimport logging\n\n# Set up logging\nlogging.basicConfig(level=logging.INFO)\nlogger = logging.getLogger()\n\n# Define multiple data quality checks\n\n# Check 1: Count the number of rows where temp_C is outside the acceptable range (-50 to 50)\nZERO_VAL_DQ_CHECK = f\"\"\"\nSELECT \n    SUM(CASE WHEN tradvol = 0\n    OR volwtavg = 0\n    OR openprice = 0\n    OR closeprice = 0\n    OR highestprice = 0\n    OR lowestprice = 0\n    OR day_hour_partition = '0'\n    OR CAST(normal_timestamp AS VARCHAR) = '0' THEN 1 ELSE 0 END) AS res_col\nFROM \"stockaggregatedata\".\"apple_stock_aggregate_data_sans_dup_parquet_tbl\"\n;\n\"\"\"\n\n# Check 2: Number of observations in parquet and non-parquet tables should match\nNOBS_CHECK = f\"\"\"\nSELECT \n    CASE \n        WHEN (SELECT COUNT(*) FROM \"stockaggregatedata\".\"apple_stock_aggregate_data_1453891\") - (SELECT COUNT(*) FROM \"stockaggregatedata\".\"apple_stock_aggregate_data_parquet_tbl\") <> 0 \n        THEN 1 \n        ELSE 0 \n    END AS res_col\n;\n\"\"\"\n\n# Check 3: Are there any duplicates when you use timestamp and day as the composite key\nDUP_CHECK_TS_DAY = f\"\"\"\nSELECT \n    SUM(\n        CASE \n            WHEN EXISTS (\n                SELECT normal_timestamp, day_hour_partition\n                FROM \"stockaggregatedata\".\"apple_stock_aggregate_data_sans_dup_parquet_tbl\"\n                GROUP BY normal_timestamp, day_hour_partition\n                HAVING COUNT(*) > 1\n            ) THEN 1\n            ELSE 0\n        END\n    ) AS res_col\nFROM \"stockaggregatedata\".\"apple_stock_aggregate_data_sans_dup_parquet_tbl\";\n\"\"\"\n\n# Check 4: Are there any duplicates when you look at all columns all at once\nDUP_CHECK = f\"\"\"\nSELECT \n    SUM(\n        CASE \n            WHEN EXISTS (\n                select day_hour_partition, normal_timestamp, tradvol, volwtavg, openprice, \ncloseprice, highestprice, lowestprice, count(*) from \n\"stockaggregatedata\".\"apple_stock_aggregate_data_sans_dup_parquet_tbl\"\ngroup by 1,2,3,4,5,6,7,8 having count(*) > 1\n            ) THEN 1\n            ELSE 0\n        END\n    ) AS res_col\nFROM \"stockaggregatedata\".\"apple_stock_aggregate_data_sans_dup_parquet_tbl\";\n\"\"\"\n\n# Check 5: What % of the Days are null? We cannot allow non-zero percentages to pass!\nPCT_NULL_CHECK = f\"\"\"\nselect sum(case when day_hour_partition is null then 1 else 0 end) * 1.0 / (\nselect count(*) from \"stockaggregatedata\".\"apple_stock_aggregate_data_sans_dup_parquet_tbl\") * 100\nas res_col from \"stockaggregatedata\".\"apple_stock_aggregate_data_sans_dup_parquet_tbl\"\n\"\"\"\n\n# Define a function to run a check and validate results\ndef run_dq_check(query, check_name):\n    try:\n        df = wr.athena.read_sql_query(sql=query, database=\"stockaggregatedata\")\n        if df['res_col'][0] != 0:\n            logger.error(f'{check_name} failed. Quality check returned results.')\n            sys.exit(1)  # Exit with an error status\n        else:\n            logger.info(f'{check_name} passed.')\n    except Exception as e:\n        logger.error(f'An error occurred while running {check_name}: {str(e)}')\n        sys.exit(1)\n\n# Run the data quality checks in sequence\nrun_dq_check(ZERO_VAL_DQ_CHECK, \"ZERO_VAL_DQ_CHECK\")\nrun_dq_check(NOBS_CHECK, \"NOBS_CHECK\")\nrun_dq_check(DUP_CHECK_TS_DAY, \"DUP_CHECK_TS_DAY\")\nrun_dq_check(DUP_CHECK, \"DUP_CHECK\")\nrun_dq_check(PCT_NULL_CHECK, \"PCT_NULL_CHECK\")\n\nlogger.info('All quality checks passed successfully.')"
-}
+import sys
+import awswrangler as wr
+import logging
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger()
+
+# Define multiple data quality checks
+
+# Check 1: Count the number of rows where temp_C is outside the acceptable range (-50 to 50)
+ZERO_VAL_DQ_CHECK = f"""
+SELECT 
+    SUM(CASE WHEN tradvol = 0
+    OR volwtavg = 0
+    OR openprice = 0
+    OR closeprice = 0
+    OR highestprice = 0
+    OR lowestprice = 0
+    OR day_hour_partition = '0'
+    OR CAST(normal_timestamp AS VARCHAR) = '0' THEN 1 ELSE 0 END) AS res_col
+FROM "stockaggregatedata"."apple_stock_aggregate_data_sans_dup_parquet_tbl"
+;
+"""
+
+# Check 2: Number of observations in parquet and non-parquet tables should match
+NOBS_CHECK = f"""
+SELECT 
+    CASE 
+        WHEN (SELECT COUNT(*) FROM "stockaggregatedata"."apple_stock_aggregate_data_1453891") - (SELECT COUNT(*) FROM "stockaggregatedata"."apple_stock_aggregate_data_parquet_tbl") <> 0 
+        THEN 1 
+        ELSE 0 
+    END AS res_col
+;
+"""
+
+# Check 3: Are there any duplicates when you use timestamp and day as the composite key
+DUP_CHECK_TS_DAY = f"""
+SELECT 
+    SUM(
+        CASE 
+            WHEN EXISTS (
+                SELECT normal_timestamp, day_hour_partition
+                FROM "stockaggregatedata"."apple_stock_aggregate_data_sans_dup_parquet_tbl"
+                GROUP BY normal_timestamp, day_hour_partition
+                HAVING COUNT(*) > 1
+            ) THEN 1
+            ELSE 0
+        END
+    ) AS res_col
+FROM "stockaggregatedata"."apple_stock_aggregate_data_sans_dup_parquet_tbl";
+"""
+
+# Check 4: Are there any duplicates when you look at all columns all at once
+DUP_CHECK = f"""
+SELECT 
+    SUM(
+        CASE 
+            WHEN EXISTS (
+                select day_hour_partition, normal_timestamp, tradvol, volwtavg, openprice, 
+closeprice, highestprice, lowestprice, count(*) from 
+"stockaggregatedata"."apple_stock_aggregate_data_sans_dup_parquet_tbl"
+group by 1,
+2,
+3,
+4,
+5,
+6,
+7,
+8 having count(*) > 1
+            ) THEN 1
+            ELSE 0
+        END
+    ) AS res_col
+FROM "stockaggregatedata"."apple_stock_aggregate_data_sans_dup_parquet_tbl";
+"""
+
+# Check 5: What % of the Days are null? We cannot allow non-zero percentages to pass!
+PCT_NULL_CHECK = f"""
+select sum(case when day_hour_partition is null then 1 else 0 end) * 1.0 / (
+select count(*) from "stockaggregatedata"."apple_stock_aggregate_data_sans_dup_parquet_tbl") * 100
+as res_col from "stockaggregatedata"."apple_stock_aggregate_data_sans_dup_parquet_tbl""""
+
+# Define a function to run a check and validate results
+def run_dq_check(query, check_name):
+    try:
+        df = wr.athena.read_sql_query(sql=query, database="stockaggregatedata")
+        if df['res_col'
+][
+	0
+] != 0:
+            logger.error(f'{check_name
+} failed. Quality check returned results.')
+            sys.exit(1)  # Exit with an error status
+        else:
+            logger.info(f'{check_name
+} passed.')
+    except Exception as e:
+        logger.error(f'An error occurred while running {check_name
+}: {str(e)
+}')
+        sys.exit(1)
+
+# Run the data quality checks in sequence
+run_dq_check(ZERO_VAL_DQ_CHECK,
+"ZERO_VAL_DQ_CHECK")
+run_dq_check(NOBS_CHECK,
+"NOBS_CHECK")
+run_dq_check(DUP_CHECK_TS_DAY,
+"DUP_CHECK_TS_DAY")
+run_dq_check(DUP_CHECK,
+"DUP_CHECK")
+run_dq_check(PCT_NULL_CHECK,
+"PCT_NULL_CHECK")
+
+logger.info('All quality checks passed successfully.')

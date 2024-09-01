@@ -1,39 +1,125 @@
-{
-	"jobConfig": {
-		"name": "delete-pqt-stock-aggregate-data",
-		"description": "",
-		"role": "arn:aws:iam::xxxxxxxxxxxx:role/service-role/AWSGlueServiceRole",
-		"command": "pythonshell",
-		"version": "1.0",
-		"runtime": null,
-		"workerType": null,
-		"numberOfWorkers": null,
-		"maxCapacity": 0.0625,
-		"jobRunQueuingEnabled": false,
-		"maxRetries": 0,
-		"timeout": 2880,
-		"maxConcurrentRuns": 1,
-		"security": "none",
-		"scriptName": "delete-pqt-stock-aggregate-data.py",
-		"scriptLocation": "s3://aws-glue-assets-xxxxxxxxxxxx-us-east-1/scripts/",
-		"language": "python-3.9",
-		"spark": false,
-		"jobParameters": [],
-		"tags": [],
-		"jobMode": "DEVELOPER_MODE",
-		"createdOn": "2024-08-28T17:25:54.820Z",
-		"developerMode": true,
-		"connectionsList": [],
-		"temporaryDirectory": "s3://aws-glue-assets-xxxxxxxxxxxx-us-east-1/temporary/",
-		"glueHiveMetastore": true,
-		"etlAutoTuning": false,
-		"observabilityMetrics": false,
-		"pythonShellPrebuiltLibraryOption": "analytics",
-		"flexExecution": false,
-		"minFlexWorkers": null,
-		"maintenanceWindow": null
-	},
-	"hasBeenSaved": false,
-	"usageProfileName": null,
-	"script": "import sys\nimport json\nimport boto3\n\n# replace these with the names from your environment\nBUCKET_TO_DEL = 'pqt-stock-aggregate-data-1453891'\nDATABASE_TO_DEL = 'stockaggregatedata'\nTABLE_TO_DEL = 'apple_stock_aggregate_data_parquet_tbl'\nSANS_DUP_TABLE_TO_DEL = 'apple_stock_aggregate_data_sans_dup_parquet_tbl'\nQUERY_OUTPUT_BUCKET = 's3://athena-query-results-first-de-project-aug-2024-1639045/'\n\n\n# delete all objects in the bucket\ns3_client = boto3.client('s3')\n\nwhile True:\n    objects = s3_client.list_objects(Bucket=BUCKET_TO_DEL)\n    content = objects.get('Contents', [])\n    if len(content) == 0:\n        break\n    for obj in content:\n        s3_client.delete_object(Bucket=BUCKET_TO_DEL, Key=obj['Key'])\n\n\n# drop the table too\nclient = boto3.client('athena')\n\nqueryStart1 = client.start_query_execution(\n    QueryString = f\"\"\"\n    DROP TABLE IF EXISTS {DATABASE_TO_DEL}.{TABLE_TO_DEL};\n    \"\"\",\n    QueryExecutionContext = {\n        'Database': f'{DATABASE_TO_DEL}'\n    }, \n    ResultConfiguration = { 'OutputLocation': f'{QUERY_OUTPUT_BUCKET}'}\n)\n\nqueryStart2 = client.start_query_execution(\n    QueryString = f\"\"\"\n    DROP TABLE IF EXISTS {DATABASE_TO_DEL}.{SANS_DUP_TABLE_TO_DEL};\n    \"\"\",\n    QueryExecutionContext = {\n        'Database': f'{DATABASE_TO_DEL}'\n    }, \n    ResultConfiguration = { 'OutputLocation': f'{QUERY_OUTPUT_BUCKET}'}\n)\n\n# list of responses\nresp = [\"FAILED\", \"SUCCEEDED\", \"CANCELLED\"]\n\n# get the response\nresponse1 = client.get_query_execution(QueryExecutionId=queryStart1[\"QueryExecutionId\"])\nresponse2 = client.get_query_execution(QueryExecutionId=queryStart2[\"QueryExecutionId\"])\n\n# wait until query finishes\nwhile response1[\"QueryExecution\"][\"Status\"][\"State\"] not in resp:\n    response1 = client.get_query_execution(QueryExecutionId=queryStart1[\"QueryExecutionId\"])\nwhile response2[\"QueryExecution\"][\"Status\"][\"State\"] not in resp:\n    response2 = client.get_query_execution(QueryExecutionId=queryStart2[\"QueryExecutionId\"])\n    \n# if it fails, exit and give the Athena error message in the logs\nif response1[\"QueryExecution\"][\"Status\"][\"State\"] == 'FAILED':\n    sys.exit(response1[\"QueryExecution\"][\"Status\"][\"StateChangeReason\"])\nif response2[\"QueryExecution\"][\"Status\"][\"State\"] == 'FAILED':\n    sys.exit(response2[\"QueryExecution\"][\"Status\"][\"StateChangeReason\"])\n"
+import sys
+import json
+import boto3
+
+# replace these with the names from your environment
+BUCKET_TO_DEL = 'pqt-stock-aggregate-data-1453891'
+DATABASE_TO_DEL = 'stockaggregatedata'
+TABLE_TO_DEL = 'apple_stock_aggregate_data_parquet_tbl'
+SANS_DUP_TABLE_TO_DEL = 'apple_stock_aggregate_data_sans_dup_parquet_tbl'
+QUERY_OUTPUT_BUCKET = 's3: //athena-query-results-first-de-project-aug-2024-1639045/'
+
+
+# delete all objects in the bucket
+s3_client = boto3.client('s3')
+
+while True:
+    objects = s3_client.list_objects(Bucket=BUCKET_TO_DEL)
+    content = objects.get('Contents',
+[])
+    if len(content) == 0:
+        break
+    for obj in content:
+        s3_client.delete_object(Bucket=BUCKET_TO_DEL, Key=obj['Key'
+])
+
+
+# drop the table too
+client = boto3.client('athena')
+
+queryStart1 = client.start_query_execution(
+    QueryString = f"""
+    DROP TABLE IF EXISTS {DATABASE_TO_DEL
+}.{TABLE_TO_DEL
+};
+    """,
+    QueryExecutionContext = {
+        'Database': f'{DATABASE_TO_DEL
+	}'
+}, 
+    ResultConfiguration = { 'OutputLocation': f'{QUERY_OUTPUT_BUCKET
+	}'
 }
+)
+
+queryStart2 = client.start_query_execution(
+    QueryString = f"""
+    DROP TABLE IF EXISTS {DATABASE_TO_DEL
+}.{SANS_DUP_TABLE_TO_DEL
+};
+    """,
+    QueryExecutionContext = {
+        'Database': f'{DATABASE_TO_DEL
+	}'
+}, 
+    ResultConfiguration = { 'OutputLocation': f'{QUERY_OUTPUT_BUCKET
+	}'
+}
+)
+
+# list of responses
+resp = [
+	"FAILED",
+	"SUCCEEDED",
+	"CANCELLED"
+]
+
+# get the response
+response1 = client.get_query_execution(QueryExecutionId=queryStart1[
+	"QueryExecutionId"
+])
+response2 = client.get_query_execution(QueryExecutionId=queryStart2[
+	"QueryExecutionId"
+])
+
+# wait until query finishes
+while response1[
+	"QueryExecution"
+][
+	"Status"
+][
+	"State"
+] not in resp:
+    response1 = client.get_query_execution(QueryExecutionId=queryStart1[
+	"QueryExecutionId"
+])
+while response2[
+	"QueryExecution"
+][
+	"Status"
+][
+	"State"
+] not in resp:
+    response2 = client.get_query_execution(QueryExecutionId=queryStart2[
+	"QueryExecutionId"
+])
+    
+# if it fails, exit and give the Athena error message in the logs
+if response1[
+	"QueryExecution"
+][
+	"Status"
+][
+	"State"
+] == 'FAILED':
+    sys.exit(response1[
+	"QueryExecution"
+][
+	"Status"
+][
+	"StateChangeReason"
+])
+if response2[
+	"QueryExecution"
+][
+	"Status"
+][
+	"State"
+] == 'FAILED':
+    sys.exit(response2[
+	"QueryExecution"
+][
+	"Status"
+][
+	"StateChangeReason"
+])
