@@ -43,7 +43,7 @@ Data visualization: ![Grafana](https://github.com/arnab-raychaudhari/stock-aggre
 
 10 - Create another Glue job to identify the duplicate records in the parquet table created in step 9, and copy the unique ones to a new table. Code available at [Unique Observations](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/b793992353ca4eac2ef41f8c3d5d9b5d54860070/create-sans-dup-pqt-if-required-glue-job-script.py)
 
-11 - Perform the following data quality checks on the table created in step 10 before using the data for insightful visualization. Code available at [Data Quality Checks](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/b793992353ca4eac2ef41f8c3d5d9b5d54860070/data-quality-stock-aggregate-glue-job-script.py)
+11 - Perform the following data quality checks on the table created in step 10 before using the data for insightful visualization. Code available at [Data Quality Checks](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/e47f34588ccd706b2bb0894bf742d8a70bbfebf1/data-quality-stock-aggregate-glue-job-script.py)
 
 11.a - Check for zero values in any of the financial info features
 
