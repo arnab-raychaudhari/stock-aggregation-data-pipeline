@@ -17,6 +17,10 @@ Data transofrmation and validation: ![AWS Glue Jobs](https://github.com/arnab-ra
 
 Data visualization: ![Grafana](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/9f69abd4d570c16be5bc47b330bca84032e24aa5/devicon--grafana.svg) Grafana, ![AWS IAM](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/1574de2d30f644046913b565ca778f22f449e567/logos--aws-iam.svg) AWS IAM
 
+## Data Source
+
+[Polygon.io](https://polygon.io/docs/stocks/get_v2_aggs_ticker__stocksticker__range__multiplier___timespan___from___to)
+
 ## Architecture Diagram
 
 ![Architecture Diagram](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/8782140878d57c7cb14357b8ba031b1f13c813c5/StockAggregateArchitectureDiagram.jpg)
@@ -67,6 +71,8 @@ those in the parquet table (step 9) are the same
 ## Results
 
 ![Visualization](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/d00fb780b8e7bd3c0f63e6deab49038985481f5a/GIF-grafana-dashboard.gif)
+
+[Grafana Snapshot](https://arnabraychaudhari.grafana.net/dashboard/snapshot/pPC7lctxipa1XRDHRA1GDTDEJbQauSf8)
 
 ## Future Consideration
 
