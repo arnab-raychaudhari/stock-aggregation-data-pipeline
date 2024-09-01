@@ -1,0 +1,51 @@
+{
+    "Crawler": {
+        "Name": "apple-stock-aggregate",
+        "Role": "service-role/AWSGlueServiceRole",
+        "Targets": {
+            "S3Targets": [
+                {
+                    "Path": "s3://stock-aggregate-data-1453891/",
+                    "Exclusions": []
+                }
+            ],
+            "JdbcTargets": [],
+            "MongoDBTargets": [],
+            "DynamoDBTargets": [],
+            "CatalogTargets": [],
+            "DeltaTargets": [],
+            "IcebergTargets": [],
+            "HudiTargets": []
+        },
+        "DatabaseName": "stockaggregatedata",
+        "Classifiers": [],
+        "RecrawlPolicy": {
+            "RecrawlBehavior": "CRAWL_EVERYTHING"
+        },
+        "SchemaChangePolicy": {
+            "UpdateBehavior": "UPDATE_IN_DATABASE",
+            "DeleteBehavior": "DEPRECATE_IN_DATABASE"
+        },
+        "LineageConfiguration": {
+            "CrawlerLineageSettings": "DISABLE"
+        },
+        "State": "READY",
+        "TablePrefix": "apple_",
+        "CrawlElapsedTime": 0,
+        "CreationTime": "2024-08-28T01:00:36-04:00",
+        "LastUpdated": "2024-08-28T01:00:36-04:00",
+        "LastCrawl": {
+            "Status": "SUCCEEDED",
+            "LogGroup": "/aws-glue/crawlers",
+            "LogStream": "apple-stock-aggregate",
+            "MessagePrefix": "58bac874-5df7-3ee3-9ce5-a6c8aab03215",
+            "StartTime": "2024-08-31T15:25:06-04:00"
+        },
+        "Version": 1,
+        "Configuration": "{\"Version\":1.0,\"CreatePartitionIndex\":true}",
+        "LakeFormationConfiguration": {
+            "UseLakeFormationCredentials": false,
+            "AccountId": ""
+        }
+    }
+}

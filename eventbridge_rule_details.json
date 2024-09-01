@@ -1,0 +1,9 @@
+{
+    "Name": "daily-11-am-et",
+    "Arn": "arn:aws:events:us-east-1:xxxxxxxxxxxx:rule/daily-11-am-et",
+    "ScheduleExpression": "cron(0 15 * * ? *)",
+    "State": "ENABLED",
+    "Description": "Trigger to run once everyday at 11 AM ET to refersh stock aggregate data",
+    "EventBusName": "default",
+    "CreatedBy": "xxxxxxxxxxxx"
+}
