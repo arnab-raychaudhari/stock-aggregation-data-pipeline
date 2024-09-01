@@ -1,0 +1,168 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 14,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "xxxxxxxxxxxxxx"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "trad_vol"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.3.0-75221",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "stockaggregatedata",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "datasource": {
+            "type": "grafana-athena-datasource",
+            "uid": "edw1whoz0wf0gc"
+          },
+          "format": 1,
+          "rawSQL": "SELECT \n    normal_timestamp, \n    tradvol AS trad_vol, \n    volwtavg AS vol_wt_avg, \n    openprice AS open_price,\n    closeprice AS close_price, \n    highestprice AS highest_price, \n    lowestprice AS lowest_price\nFROM \n    apple_stock_aggregate_data_parquet_tbl \nWHERE \n    CAST(normal_timestamp AS DATE) BETWEEN $__timeFrom() AND $__timeTo()\nORDER BY \n    normal_timestamp;",
+          "refId": "A",
+          "table": "apple_stock_aggregate_data_parquet_tbl"
+        }
+      ],
+      "title": "Panel Title",
+      "type": "timeseries"
+    }
+  ],
+  "preload": false,
+  "schemaVersion": 39,
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Stock-Aggregate-Apple",
+  "uid": "xxxxxxxxxxxxxx",
+  "version": 3,
+  "weekStart": ""
+}
