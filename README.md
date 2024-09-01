@@ -37,13 +37,13 @@ Data visualization: ![Grafana](https://github.com/arnab-raychaudhari/stock-aggre
 
 7 - Navigate to AWS Glue service and create a Crawler that reads the files created by Kinesis Firehose in the S3 bucket we created in step 3. Refer to .json format at [crawler-configuration.json](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/cb5a6422542fd0c9e0879f430506367eb8f2a69f/crawler_configuration.json)
 
-8 - Next, create a Glue job (that runs python script) that deletes the parquet tables from previous runs. 
+8 - Next, create a Glue job (that runs python script) that deletes the parquet tables from previous runs. Code available at [Delete Parquet Tables Before New Run](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/b793992353ca4eac2ef41f8c3d5d9b5d54860070/delete-pqt-stock-aggregate-data-glue-job-script.py)
 
-9 - Create another Glue job to roundup the aggregate figures to two places after decimal, and parse through the timestamp field to extract the day and hour marks to create a new feature 'day_hour_partition', which will be used to partition the parquet table. Also, this job will cast the Unixmsects into integer value for effective downstream processing. At last, the transformed dataset will be written to parquest table in AWS Athena.
+9 - Create another Glue job to roundup the aggregate figures to two places after decimal, and parse through the timestamp field to extract the day and hour marks to create a new feature 'day_hour_partition', which will be used to partition the parquet table. Also, this job will cast the Unixmsects into integer value for effective downstream processing. At last, the transformed dataset will be written to parquest table in AWS Athena. Code available at [Create Parquest Table](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/b793992353ca4eac2ef41f8c3d5d9b5d54860070/create-stock-aggregate-data-pqt-glue-job-script.py)
 
-10 - Create another Glue job to identify the duplicate records in the parquet table created in step 9, and copy the unique ones to a new table.
+10 - Create another Glue job to identify the duplicate records in the parquet table created in step 9, and copy the unique ones to a new table. Code available at [Unique Observations](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/b793992353ca4eac2ef41f8c3d5d9b5d54860070/create-sans-dup-pqt-if-required-glue-job-script.py)
 
-11 - Perform the following data quality checks on the table created in step 10 before using the data for insightful visualization.
+11 - Perform the following data quality checks on the table created in step 10 before using the data for insightful visualization. Code available at [Data Quality Checks](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/b793992353ca4eac2ef41f8c3d5d9b5d54860070/data-quality-stock-aggregate-glue-job-script.py)
 
 11.a - Check for zero values in any of the financial info features
 
@@ -54,7 +54,7 @@ those in the parquet table (step 9) are the same
 
 11.d - Perform null value check on all features
 
-12 - If the quality checks in step 11 have passed, archive a copy of the table (which is now ready for production use) for future reference. Suffix the tablename with data and timestamps to reflect when it was used for production consumption.
+12 - If the quality checks in step 11 have passed, archive a copy of the table (which is now ready for production use) for future reference. Suffix the tablename with data and timestamps to reflect when it was used for production consumption. Code available at [Publish Production Table](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/b793992353ca4eac2ef41f8c3d5d9b5d54860070/publish_prod_parquet_stock_aggregate-glue-job-script.py)
 
 13 - Create a Glue Workflow and build the sequence of jobs between step 8 and 12 (both inclusive) while ensuring the same top down order. Schedule the workflow start trigger to run at 1200 EDT everyday.
 
