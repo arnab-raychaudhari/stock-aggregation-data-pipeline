@@ -8,9 +8,15 @@ To reveal trends that influency buy/sell decisions of the AAPL ticker by providi
 ## Tech Stack
 
 Programming Language: Python
+
 Data ingestion: AWS Lambda, AWS EventBridge Trigger, AWS Kinesis FireHose, AWS Glue Crawler, AWS IAM
+
 Data storage: AWS Athena and Query Editor, AWS S3
+
 Data transofrmation and validation: AWS Glue Jobs, AWS Glue Workflows, AWS Cloudwatch Logs
+
 Data visualization: Grafana
 
+## Architecture Diagram
 
+![Architecture Diagram](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/9c1c00bc7b0547e0a83972ff30312cbf539deea4/StockAggregateArchitectureDiagram.jpg)
