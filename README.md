@@ -7,7 +7,7 @@ To reveal trends that influency buy/sell decisions of the AAPL ticker by providi
 
 ## Tech Stack
 
-Programming Language: Python
+Programming Language: ![Python](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/9f69abd4d570c16be5bc47b330bca84032e24aa5/logos--python.svg) Python
 
 Data ingestion: ![AWS Lambda](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/1574de2d30f644046913b565ca778f22f449e567/logos--aws-lambda.svg) AWS Lambda, ![AWS EventBridge](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/1574de2d30f644046913b565ca778f22f449e567/logos--aws-eventbridge.svg) AWS Event Bridge, ![AWS Kinesis](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/1574de2d30f644046913b565ca778f22f449e567/logos--aws-kinesis.svg) AWS Kinesis FireHose, ![AWS EventBridge Trigger](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/1574de2d30f644046913b565ca778f22f449e567/logos--aws-eventbridge.svg) AWS EventBridge Trigger, ![AWS Glue Crawler](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/1574de2d30f644046913b565ca778f22f449e567/logos--aws-glue.svg) AWS Glue Crawler, ![AWS IAM](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/1574de2d30f644046913b565ca778f22f449e567/logos--aws-iam.svg) AWS IAM
 
@@ -15,7 +15,7 @@ Data storage: ![AWS Athena](https://github.com/arnab-raychaudhari/stock-aggregat
 
 Data transofrmation and validation: ![AWS Glue Jobs](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/1574de2d30f644046913b565ca778f22f449e567/logos--aws-glue.svg) AWS Glue Jobs, ![AWS Glue WorkFlows](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/1574de2d30f644046913b565ca778f22f449e567/logos--aws-glue.svg) AWS Glue Workflows, ![AWS Cloudwatch Logs](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/1574de2d30f644046913b565ca778f22f449e567/logos--aws-cloudwatch.svg) AWS Cloudwatch Logs
 
-Data visualization: Grafana, ![AWS IAM](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/1574de2d30f644046913b565ca778f22f449e567/logos--aws-iam.svg) AWS IAM
+Data visualization: ![Grafana](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/9f69abd4d570c16be5bc47b330bca84032e24aa5/devicon--grafana.svg) Grafana, ![AWS IAM](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/1574de2d30f644046913b565ca778f22f449e567/logos--aws-iam.svg) AWS IAM
 
 ## Architecture Diagram
 
@@ -29,7 +29,7 @@ Data visualization: Grafana, ![AWS IAM](https://github.com/arnab-raychaudhari/st
 
 3 - Create another S3 bucket where Kinesis Firehose will write the data streams coming in from the external API
 
-4 - Create a Kinesis Firehose and configure it to be ready to receive data. Ensure the buffer is set to 5 MB and 60 secs
+4 - Create a Kinesis Firehose and configure it to be ready to receive data. Ensure the buffer is set to 5 MB and 60 secs. A .json output of the firehose configuration is available at []()
 
 5 - Create a Lambda function (python + x86_64) to call the external API. Update the timeout to 10 secs and use the correct name of your firehose. Before invoking the API, the date range in API URL will be updated to set the StartDate = Yesterday's date - 7 days, and EndDate = Yesterday's date. This way we will fetch hourly data for the last 7 days.
 
@@ -60,7 +60,7 @@ those in the parquet table (step 9) are the same
 
 14 - Login to your Grafana account, setup a new connection with AWS Athena (you need to create a new user in AWS IAM, add full permissions Athena and S3, and generate Access Keys), and build a new dashboard.
 
-15 - In Grafana, build a SQL query that retrieves the data from the table you created in step 10. Use the query in Grafana-Query.sql
+15 - In Grafana, build a SQL query that retrieves the data from the table you created in step 10. Use the query in [Grafana Query.sql](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/9f69abd4d570c16be5bc47b330bca84032e24aa5/Grafana-Query.sql)
 
 16 - Run the query to see the plots in your dashboard. Refer to the results in the following section.
 
