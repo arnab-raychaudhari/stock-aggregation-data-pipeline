@@ -56,9 +56,9 @@ those in the parquet table (step 9) are the same
 
 12 - If the quality checks in step 11 have passed, archive a copy of the table (which is now ready for production use) for future reference. Suffix the tablename with data and timestamps to reflect when it was used for production consumption. Code available at [Publish Production Table](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/b793992353ca4eac2ef41f8c3d5d9b5d54860070/publish_prod_parquet_stock_aggregate-glue-job-script.py)
 
-13 - Create a Glue Workflow and build the sequence of jobs between step 8 and 12 (both inclusive) while ensuring the same top down order. Schedule the workflow start trigger to run at 1200 EDT everyday.
+13 - Create a Glue Workflow and build the sequence of jobs between step 8 and 12 (both inclusive) while ensuring the same top down order. Schedule the workflow start trigger to run at 1200 EDT everyday. Refer to the .json file at [Glue Workflow](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/5a50abfac6b5baa007d88643db5ac3ca9487e552/glue-workflow-config.json)
 
-14 - Login to your Grafana account, setup a new connection with AWS Athena (you need to create a new user in AWS IAM, add full permissions Athena and S3, and generate Access Keys), and build a new dashboard.
+14 - Login to your Grafana account, setup a new connection with AWS Athena (you need to create a new user in AWS IAM, add full permissions Athena and S3, and generate Access Keys), and build a new dashboard. Interetsted in the configuration? Refer to the .json file [Grafana SetUp](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/5a50abfac6b5baa007d88643db5ac3ca9487e552/Stock-Aggregate-Apple-xxxxxxxxxxxxx.json)
 
 15 - In Grafana, build a SQL query that retrieves the data from the table you created in step 10. Use the query in [Grafana Query.sql](https://github.com/arnab-raychaudhari/stock-aggregation-data-pipeline/blob/9f69abd4d570c16be5bc47b330bca84032e24aa5/Grafana-Query.sql)
 
